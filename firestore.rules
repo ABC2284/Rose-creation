@@ -1,0 +1,44 @@
+// ============================================================
+// REGLE SEKIRITE FIRESTORE — kopye kole nan:
+// Firebase Console > Firestore Database > Règ (Rules)
+// ============================================================
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Nenpòt moun ka kreye yon rezèvasyon (fòm piblik la),
+    // men pèsonn pa ka modifye oswa efase apre sa depi app la —
+    // sa a evite yon moun sabote rezèvasyon lòt moun.
+    match /reservations/{reservationId} {
+      allow create: if request.resource.data.keys().hasAll(
+                        ['name','phone','service','date','status','createdAt']
+                      )
+                    && request.resource.data.status == 'confirme'
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.name.size() < 120
+                    && request.resource.data.phone is string
+                    && request.resource.data.date is string;
+      allow read: if false;   // itilizatè piblik pa ka li lis rezèvasyon yo
+      allow update, delete: if false;
+    }
+
+    // Kontè plas ki okipe chak jou (piblik, sèlman nimewo — pa gen
+    // non ni telefòn kliyan ladan) — itilize pa transaksyon rezèvasyon an.
+    match /dayCounters/{date} {
+      allow read: if true;    // bezwen pou kalandriye a montre disponibilite
+      allow create, update: if request.resource.data.count is int
+                            && request.resource.data.count >= 0
+                            && request.resource.data.date is string;
+      allow delete: if false;
+    }
+  }
+}
+
+/* ------------------------------------------------------------
+   NÒT: Paj piblik la (index.html) pa ka "li" lis konplè
+   rezèvasyon yo pou rezon konfidansyalite kliyan.
+   Pou Carl ka wè lis rezèvasyon yo, itilize Firebase Console:
+   Firestore Database > koleksyon "reservations".
+   ------------------------------------------------------------ */
