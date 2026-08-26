@@ -8,12 +8,12 @@
 // 1) Konfigirasyon Firebase — kopye l soti nan Firebase Console
 //    (Paramèt pwojè > Jeneral > Aplikasyon web ou a)
 export const firebaseConfig = {
-  apiKey: "REMPLASE_AVEK_API_KEY_OU",
-  authDomain: "REMPLASE.firebaseapp.com",
-  projectId: "REMPLASE",
-  storageBucket: "REMPLASE.appspot.com",
-  messagingSenderId: "REMPLASE",
-  appId: "REMPLASE",
+  apiKey: "AIzaSyDJwsEPbMvCgrSrF-sHNBlpN5_TpEsbP1w",
+  authDomain: "https://rose-creatrice-default-rtdb.firebaseio.com",
+  projectId: "rose-créatrice",
+  storageBucket: "rose-creatrice.firebasestorage.app",
+  messagingSenderId: "876965087161",
+  appId: "1:876965087161 :web :5ea4911f3639252a1b9868 ",
 };
 
 // 2) Nimewo WhatsApp biznis la (fòma entènasyonal, san "+" ni espas)
