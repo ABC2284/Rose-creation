@@ -55,14 +55,29 @@ if (navToggle && navMenu) {
   );
 }
 
+// ---- Detekte si app la ap kouri "enstale" (standalone) ----
+function isStandalone() {
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.navigator.standalone === true ||
+    localStorage.getItem("rc_installed") === "1"
+  );
+}
+
 // ---- Prompt Enstalasyon (Android/Desktop: beforeinstallprompt) ----
 let deferredInstallPrompt = null;
 const installBtn = document.getElementById("installBtn");
 
+// Si app la deja enstale (oswa n ap kouri ladan l kounye a), pa janm
+// montre bouton "Enstale" a menm.
+if (installBtn && isStandalone()) {
+  installBtn.hidden = true;
+}
+
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredInstallPrompt = e;
-  if (installBtn) installBtn.hidden = false;
+  if (installBtn && !isStandalone()) installBtn.hidden = false;
 });
 
 if (installBtn) {
@@ -72,6 +87,7 @@ if (installBtn) {
     await deferredInstallPrompt.userChoice;
     deferredInstallPrompt = null;
     installBtn.hidden = true;
+    localStorage.setItem("rc_installed", "1");
   });
 }
 
@@ -79,14 +95,6 @@ window.addEventListener("appinstalled", () => {
   if (installBtn) installBtn.hidden = true;
   localStorage.setItem("rc_installed", "1");
 });
-
-// ---- Detekte si app la ap kouri "enstale" (standalone) ----
-function isStandalone() {
-  return (
-    window.matchMedia("(display-mode: standalone)").matches ||
-    window.navigator.standalone === true
-  );
-}
 
 // ---- Bandwo aktivasyon notifikasyon (parèt yon sèl fwa, apre enstalasyon) ----
 const notifBanner = document.getElementById("notifBanner");
@@ -131,6 +139,30 @@ if (notifDismissBtn) {
 window.addEventListener("load", () => {
   setTimeout(maybeShowNotifBanner, 2200);
 });
+
+// ---- Re-verifye lè moun nan retounen sou app la ----
+// (egzanp: apre yo fin bay otorizasyon nan paramèt telefòn nan,
+// oswa apre yo fin enstale app la pandan yo te sou yon lòt paj)
+function recheckOverlaysOnReturn() {
+  // Notifikasyon: si pèmisyon an chanje (granted/denied), fèmen bandwo a
+  if (notifBanner && !notifBanner.hidden) {
+    if (!("Notification" in window) || Notification.permission !== "default") {
+      notifBanner.hidden = true;
+    }
+  }
+  // Enstalasyon: si app la vin enstale antretan, kache bouton an
+  if (installBtn && !installBtn.hidden && isStandalone()) {
+    installBtn.hidden = true;
+  }
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    recheckOverlaysOnReturn();
+  }
+});
+window.addEventListener("focus", recheckOverlaysOnReturn);
+window.addEventListener("pageshow", recheckOverlaysOnReturn);
 
 // ---- Ane a nan footer ----
 const yearEl = document.getElementById("year");
