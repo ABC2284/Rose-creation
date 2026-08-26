@@ -18,15 +18,15 @@ export const firebaseConfig = {
 
 // 2) Nimewo WhatsApp biznis la (fòma entènasyonal, san "+" ni espas)
 //    Egzanp Ayiti: 50937xxxxxx
-export const WHATSAPP_NUMBER = "50900000000";
+export const WHATSAPP_NUMBER = "509 3757-9476/5093556-0934";
 
 // 3) Non biznis la ak lyen rezo sosyal (mete yo si ou genyen)
 export const BUSINESS = {
   name: "Rose Créatrice",
   address: "Delmas 33, Petite Place Cazeau, 3ème Cité, Port-au-Prince, Haïti",
-  instagram: "", // egzanp: "https://instagram.com/rosecreatrice"
-  facebook: "",
-  tiktok: "",
+  instagram: "https://wa.me/50935580934", // egzanp: "https://instagram.com/rosecreatrice"
+  facebook: "https://www.facebook.com/profile.php?id=61572062762803&mibextid=rS40aB7S9Ucbxw6v",
+  tiktok: "https://www.tiktok.com/@together.ppite?_r=1&_t=ZS-99BH1Gy6XXl",
 };
 
 // 4) Règ rezèvasyon — kapasite pa jou
