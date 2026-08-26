@@ -7,7 +7,7 @@
 // anba a (v2 → v3 → v4...) — sinon telefòn moun ki DEJA enstale
 // app la ap kontinye wè ANSYEN vèsyon an pandan lontan.
 // ============================================================
-const CACHE_VERSION = "rc-v2";
+const CACHE_VERSION = "rc-v3";
 const CORE_ASSETS = [
   "./",
   "./index.html",
