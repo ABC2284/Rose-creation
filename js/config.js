@@ -9,16 +9,16 @@
 //    (Paramèt pwojè > Jeneral > Aplikasyon web ou a)
 export const firebaseConfig = {
   apiKey: "AIzaSyDJwsEPbMvCgrSrF-sHNBlpN5_TpEsbP1w",
-  authDomain: "https://rose-creatrice-default-rtdb.firebaseio.com",
-  projectId: "rose-créatrice",
+  authDomain: "rose-creatrice.firebaseapp.com",
+  projectId: "rose-creatrice",
   storageBucket: "rose-creatrice.firebasestorage.app",
   messagingSenderId: "876965087161",
-  appId: "1:876965087161 :web :5ea4911f3639252a1b9868 ",
+  appId: "1:876965087161:web:5ea4911f3639252a1b9868",
 };
 
 // 2) Nimewo WhatsApp biznis la (fòma entènasyonal, san "+" ni espas)
 //    Egzanp Ayiti: 50937xxxxxx
-export const WHATSAPP_NUMBER = "509 3757-9476/5093556-0934";
+export const WHATSAPP_NUMBER = "50937579476";
 
 // 3) Non biznis la ak lyen rezo sosyal (mete yo si ou genyen)
 export const BUSINESS = {
