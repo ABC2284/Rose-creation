@@ -1,0 +1,23 @@
+name: Rapèl chak wikenn
+
+on:
+  schedule:
+    - cron: "0 20 * * 5"
+  workflow_dispatch: {}
+
+jobs:
+  send-weekly-reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Enstale depandans
+        working-directory: ./scripts
+        run: npm install
+      - name: Voye rapèl la
+        working-directory: ./scripts
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: node send-notifications.js weekly
