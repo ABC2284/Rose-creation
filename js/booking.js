@@ -198,6 +198,29 @@ export function initBooking() {
 
   listenReservations(() => renderCalendar(calendarEl));
 
+  // ---- Rafrechi kalandriye a otomatikman lè jou a chanje ----
+  // (egzanp: si app la rete louvri pandan minwit pase, oswa si moun nan
+  // kite telefòn nan sou app la plizyè jou san rezève anyen).
+  let lastKnownDay = fmtDate(new Date());
+  setInterval(() => {
+    const nowKey = fmtDate(new Date());
+    if (nowKey !== lastKnownDay) {
+      lastKnownDay = nowKey;
+      renderCalendar(calendarEl);
+    }
+  }, 60 * 1000); // verifye chak minit
+
+  // ---- Rafrechi tou lè moun nan tounen sou app la (chanje ekran, elt.) ----
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      const nowKey = fmtDate(new Date());
+      if (nowKey !== lastKnownDay) {
+        lastKnownDay = nowKey;
+      }
+      renderCalendar(calendarEl);
+    }
+  });
+
   const form = document.getElementById("bookingForm");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
