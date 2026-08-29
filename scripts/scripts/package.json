@@ -1,9 +1,0 @@
-{
-  "name": "rose-creatrice-notifications",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Skrip otomatik pou voye notifikasyon push (GitHub Actions, san Blaze plan)",
-  "dependencies": {
-    "firebase-admin": "^12.1.0"
-  }
-}
