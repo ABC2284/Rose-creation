@@ -47,49 +47,50 @@ async function saveTokenForRecords(token) {
 }
 
 async function registerForPush() {
-  if (!("serviceWorker" in navigator)) return false;
-  if (!(await isMessagingSupported().catch(() => false))) return false;
+  if (!("serviceWorker" in navigator)) {
+    throw new Error("Navigatè a pa sipòte Service Worker");
+  }
+  const supported = await isMessagingSupported().catch(() => false);
+  if (!supported) {
+    throw new Error("Navigatè a pa sipòte Firebase Messaging (isSupported=false)");
+  }
   if (VAPID_KEY.startsWith("REMPLASE")) {
-    console.warn("VAPID_KEY poko konfigire nan js/config.js");
-    return false;
+    throw new Error("VAPID_KEY poko konfigire nan js/config.js");
   }
 
-  try {
-    const swReg = await navigator.serviceWorker.ready;
-    const messaging = getMessaging(app);
-    const token = await getToken(messaging, {
-      vapidKey: VAPID_KEY,
-      serviceWorkerRegistration: swReg,
+  const swReg = await navigator.serviceWorker.ready;
+  const messaging = getMessaging(app);
+  const token = await getToken(messaging, {
+    vapidKey: VAPID_KEY,
+    serviceWorkerRegistration: swReg,
+  });
+  if (!token) {
+    throw new Error("getToken() pa retounen okenn token");
+  }
+
+  const isNewToken = !localStorage.getItem("rc_push_registered");
+  await saveTokenForRecords(token);
+
+  // Mesaj "byenvini" lokal — parèt imedyatman, san w pa bezwen
+  // tann pwochen mesaj Carl voye soti nan Firebase Console.
+  if (isNewToken) {
+    localStorage.setItem("rc_push_registered", "1");
+    swReg.showNotification("🌹 Byenvini nan Rose Créatrice!", {
+      body: "Notifikasyon aktive — w ap resevwa nouvèl ak rapèl rezèvasyon.",
+      icon: "./icons/icon-192.png",
     });
-    if (token) {
-      const isNewToken = !localStorage.getItem("rc_push_registered");
-      await saveTokenForRecords(token);
-
-      // Mesaj "byenvini" lokal — parèt imedyatman, san w pa bezwen
-      // tann pwochen mesaj Carl voye soti nan Firebase Console.
-      if (isNewToken) {
-        localStorage.setItem("rc_push_registered", "1");
-        swReg.showNotification("🌹 Byenvini nan Rose Créatrice!", {
-          body: "Notifikasyon aktive — w ap resevwa nouvèl ak rapèl rezèvasyon.",
-          icon: "./icons/icon-192.png",
-        });
-      }
-
-      // Mesaj ki rive PANDAN app la ouvri (premye plan)
-      onMessage(messaging, (payload) => {
-        const title = payload.notification?.title || "Rose Créatrice";
-        const body = payload.notification?.body || "";
-        swReg.showNotification(title, {
-          body,
-          icon: "./icons/icon-192.png",
-        });
-      });
-      return true;
-    }
-  } catch (err) {
-    console.warn("Erè pandan enskripsyon notifikasyon push:", err);
   }
-  return false;
+
+  // Mesaj ki rive PANDAN app la ouvri (premye plan)
+  onMessage(messaging, (payload) => {
+    const title = payload.notification?.title || "Rose Créatrice";
+    const body = payload.notification?.body || "";
+    swReg.showNotification(title, {
+      body,
+      icon: "./icons/icon-192.png",
+    });
+  });
+  return true;
 }
 
 function maybeShowBanner() {
@@ -105,15 +106,29 @@ function maybeShowBanner() {
 
 if (enableBtn) {
   enableBtn.addEventListener("click", async () => {
+    let statusMsg = "";
     try {
       const perm = await Notification.requestPermission();
       if (perm === "granted") {
-        await registerForPush();
+        const ok = await registerForPush();
+        statusMsg = ok
+          ? "✅ Notifikasyon aktive avèk siksè!"
+          : "⚠️ Pèmisyon bay, men enskripsyon push echwe (gade detay anba).";
+      } else {
+        statusMsg = `⚠️ Pèmisyon: ${perm}`;
       }
     } catch (err) {
-      console.warn(err);
+      statusMsg = `⚠️ Erè: ${err.message || err}`;
     }
-    if (banner) banner.hidden = true;
+    // Montre rezilta a sou ekran pandan 6 segonn (itil pou dyagnostike sou iPhone
+    // kote pa gen aksè fasil ak console debug la).
+    if (banner) {
+      const p = banner.querySelector("p");
+      if (p) p.textContent = statusMsg;
+      setTimeout(() => {
+        banner.hidden = true;
+      }, 6000);
+    }
   });
 }
 
@@ -128,7 +143,17 @@ export function initNotifications() {
   // Si moun nan te deja bay pèmisyon anvan (nan yon lòt vizit),
   // re-anrejistre l an silans, san montre bandwo a.
   if ("Notification" in window && Notification.permission === "granted") {
-    registerForPush();
+    registerForPush().catch((err) => {
+      console.warn("Erè re-enskripsyon:", err);
+      // Montre erè a sou ekran menm si pèmisyon deja bay (itil pou dyagnostike
+      // sou iPhone kote pa gen aksè fasil ak console).
+      if (banner) {
+        const p = banner.querySelector("p");
+        if (p) p.textContent = `⚠️ Erè enskripsyon: ${err.message || err}`;
+        banner.hidden = false;
+        setTimeout(() => (banner.hidden = true), 8000);
+      }
+    });
     return;
   }
   window.addEventListener("load", () => {
