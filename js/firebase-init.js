@@ -14,6 +14,12 @@ import {
   orderBy,
   Timestamp,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  getMessaging,
+  getToken,
+  onMessage,
+  isSupported as isMessagingSupported,
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 import { firebaseConfig } from "./config.js";
 
 export const app = initializeApp(firebaseConfig);
@@ -28,4 +34,8 @@ export {
   onSnapshot,
   orderBy,
   Timestamp,
+  getMessaging,
+  getToken,
+  onMessage,
+  isMessagingSupported,
 };
