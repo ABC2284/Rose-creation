@@ -17,8 +17,6 @@ export const firebaseConfig = {
 };
 
 // 1b) Kle VAPID pou notifikasyon push (Firebase Cloud Messaging)
-//    Jwenn li nan: Firebase Console > Paramèt pwojè (⚙️) > Cloud Messaging >
-//    seksyon "Web Push certificates" > klike "Generate key pair"
 export const VAPID_KEY = "BIKhtTj9VDif1rIM0i67eqrmC_Occmkqq65QHW6ZCK_8qfOuy03BOp0-gR6NZgrKQZWZ5zOTjp8bs5cv0wLgceU";
 
 // 2) Nimewo WhatsApp biznis la (fòma entènasyonal, san "+" ni espas)
